@@ -21,5 +21,6 @@ jobs:
         script: |
           cd ~/apps/multiservice-app
           git pull
+          docker compose down
           docker compose build
           docker compose up -d
