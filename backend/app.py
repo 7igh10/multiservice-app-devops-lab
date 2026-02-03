@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 #Тест
-from flask import Flask
+from flask import Flask, jsonify
 import os
 
 app = Flask(__name__)
+
+@app.route("/version")
+def version():
+    return jsonify({"version": os.getenv("APP_VERSION", "unknown")})
 
 @app.route("/health")
 def health():

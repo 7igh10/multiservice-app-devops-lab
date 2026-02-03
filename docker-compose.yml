@@ -10,7 +10,8 @@ services:
       - backend
 
   frontend:
-    image: multiservice-app-frontend:2.0
+    build: ./frontend
+    image: multiservice-app-frontend:${APP_VERSION}
     expose:
       - "80"
     depends_on:
@@ -22,9 +23,12 @@ services:
       retries: 3
 
   backend:
-    image: multiservice-app-backend:2.0
+    build: ./backend
+    image: multiservice-app-backend:${APP_VERSION}
     expose:
       - "5000"
+    environment:
+      - APP_VERSION=${APP_VERSION}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
