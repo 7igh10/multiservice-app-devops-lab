@@ -20,7 +20,7 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         script: |
           cd ~/apps/multiservice-app
-          export APP_VERSION=${{ variables.APP_VERSION }}
+          export APP_VERSION=${{ secrets.APP_VERSION }}
           export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
           export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
           export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
