@@ -11,7 +11,7 @@ def version():
 
 @app.route("/health")
 def health():
-    return "OK", 200
+    return "FAIL", 500
 
 @app.route("/")
 def hello():
