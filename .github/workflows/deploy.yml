@@ -24,7 +24,4 @@ jobs:
           export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
           export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
           export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-          git pull
-          docker compose down
-          docker compose build
-          docker compose up -d
+          ./deploy.sh
