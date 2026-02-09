@@ -25,4 +25,6 @@ jobs:
           export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
           export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
           export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          cd /projects/multiservice-app
           ./deploy-blue-green.sh
+
