@@ -15,8 +15,6 @@ services:
     image: multiservice-app-frontend:${APP_VERSION}
     expose:
       - "80"
-    depends_on:
-      - backend_blue
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
       interval: 30s
