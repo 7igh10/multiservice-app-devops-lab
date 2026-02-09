@@ -7,11 +7,14 @@ app = Flask(__name__)
 
 @app.route("/version")
 def version():
-    return jsonify({"version": os.getenv("APP_VERSION", "unknown")})
+    return jsonify({
+	"version": os.getenv("APP_VERSION", "unknown"),
+	"color": os.getenv("COLOR", "unknown")
+    })
 
 @app.route("/health")
 def health():
-    return "FAIL", 500
+    return "OK", 200
 
 @app.route("/")
 def hello():
