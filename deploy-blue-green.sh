@@ -40,4 +40,7 @@ docker compose restart nginx
 echo "Stopping blue..."
 docker compose stop backend_blue
 
+echo "Ensuring frontend is running..."
+docker compose up -d frontend
+
 echo "Deployment successful!"
