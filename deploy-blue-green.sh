@@ -53,9 +53,14 @@ if [ "$STATUS" != "healthy" ]; then
 fi
 
 echo "Switching nginx to $TARGET..."
-ACTIVE_BACKEND=$TARGET docker compose up -d --force-recreate $NGINX_SERVICE
+#ACTIVE_BACKEND=$TARGET docker compose up -d --force-recreate $NGINX_SERVICE
+sed -i '/^ACTIVE_BACKEND=/d' .env 2>/dev/null || true
+echo "ACTIVE_BACKEND=$TARGET" >> .env
+
+docker compose up -d --force-recreate nginx
 
 echo "Post-switch verification..."
+
 sleep 30
 
 POST_STATUS=$(docker inspect --format='{{.State.Health.Status}}' multiservice-app-${TARGET}-1 2>/dev/null || echo "unhealthy")
