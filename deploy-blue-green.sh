@@ -60,8 +60,6 @@ fi
 
 echo "Switching nginx to $TARGET..."
 #ACTIVE_BACKEND=$TARGET docker compose up -d --force-recreate $NGINX_SERVICE
-sed -i '/^ACTIVE_BACKEND=/d' .env 2>/dev/null || true
-echo "ACTIVE_BACKEND=$TARGET" >> .env
 
 docker compose up -d --force-recreate nginx
 
@@ -82,6 +80,13 @@ fi
 echo "Stopping $OLD..."
 docker compose stop $OLD
 
-echo "ACTIVE_BACKEND=$TARGET" > .env
+sed -i '/^ACTIVE_BACKEND=/d' .env 2>/dev/null || true
+echo "ACTIVE_BACKEND=$TARGET" >> .env
+
+sed -i '/^APP_VERSION=/d' .env 2>/dev/null || true
+echo "APP_VERSION=$NEW_VERSION" >> .env
+
+sed -i '/^NEW_VERSION=/d' .env 2>/dev/null || true
+echo "NEW_VERSION=$NEW_VERSION" >> .env
 
 echo "Deployment successful!"
