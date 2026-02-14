@@ -8,6 +8,12 @@ if [ -z "$NEW_VERSION" ]; then
   exit 1
 fi
 
+export NEW_VERSION=$NEW_VERSION
+export APP_VERSION=$NEW_VERSION
+
+echo "APP_VERSION=$APP_VERSION"
+echo "NEW_VERSION=$NEW_VERSION"
+
 BLUE_SERVICE=backend_blue
 GREEN_SERVICE=backend_green
 NGINX_SERVICE=nginx
