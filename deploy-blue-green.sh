@@ -32,6 +32,7 @@ echo "New target backend: $TARGET"
 
 # Build and deploy new backend
 docker compose build --no-cache $TARGET
+docker compose build frontend
 docker compose up -d $TARGET
 
 # Wait for health
@@ -49,7 +50,7 @@ if [ "$STATUS" != "healthy" ]; then
   exit 1
 fi
 
-# Update .env safely (не трогаем секреты)
+# Update .env safely
 sed -i '/^ACTIVE_BACKEND=/d' .env 2>/dev/null || true
 echo "ACTIVE_BACKEND=$TARGET" >> .env
 
@@ -60,7 +61,9 @@ sed -i '/^NEW_VERSION=/d' .env 2>/dev/null || true
 echo "NEW_VERSION=$NEW_VERSION" >> .env
 
 # Force recreate nginx and frontend
-docker compose up -d --force-recreate nginx frontend
+docker compose build frontend
+docker compose up -d frontend
+docker compose up -d --force-recreate nginx
 
 echo "Post-switch verification..."
 sleep 30
