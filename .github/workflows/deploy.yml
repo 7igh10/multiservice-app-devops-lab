@@ -6,33 +6,47 @@ on:
       - 'v*'
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Extract version
-      id: version
-      run: |
-        VERSION=${GITHUB_REF#refs/tags/v}
-        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-    - name: Deploy to server
-      uses: appleboy/ssh-action@v1.0.0
+      - name: Login to GHCR
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
-      with:
-        host: ${{ secrets.DEPLOY_HOST }}
-        username: ${{ secrets.DEPLOY_USER }}
-        key: ${{ secrets.DEPLOY_KEY }}
-        script: |
-          cd ~/apps/multiservice-app
+      - name: Build backend image
+        run: |
+          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/multiservice-app-backend:${{ steps.version.outputs.VERSION }} ./backend
 
-          export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-          export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-          export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+      - name: Push backend image
+        run: |
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/multiservice-app-backend:${{ steps.version.outputs.VERSION }}
 
-          cd /projects/multiservice-app
-          echo "Deploying version ${{ steps.version.outputs.VERSION }}"
-          ./deploy-blue-green.sh ${{ steps.version.outputs.VERSION }}
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd ~/apps/multiservice-app
+
+            export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+
+            echo "Deploying version ${GITHUB_REF#refs/tags/v}"
+            ./deploy-blue-green.sh ${GITHUB_REF#refs/tags/v}
