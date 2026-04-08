@@ -50,5 +50,5 @@ jobs:
 
             cd /projects/multiservice-app
 
-            echo "Deploying version ${GITHUB_REF#refs/tags/v}"
-            ./deploy-blue-green.sh ${GITHUB_REF#refs/tags/v}
+            echo "Deploying version ${{ steps.version.outputs.VERSION }}"
+            ./deploy-blue-green.sh ${{ steps.version.outputs.VERSION }}
