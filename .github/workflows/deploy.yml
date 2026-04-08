@@ -9,6 +9,9 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -50,5 +53,7 @@ jobs:
 
             cd /projects/multiservice-app
 
-            echo "Deploying version ${{ steps.version.outputs.VERSION }}"
-            ./deploy-blue-green.sh ${{ steps.version.outputs.VERSION }}
+            VERSION=${{ needs.build-and-push.outputs.version }}
+
+            echo "Deploying version $VERSION"
+            ./deploy-blue-green.sh $VERSION
