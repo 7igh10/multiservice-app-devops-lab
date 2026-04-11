@@ -29,9 +29,17 @@ jobs:
         run: |
           docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/multiservice-app-backend:${{ steps.version.outputs.VERSION }} ./backend
 
+      - name: Build frontend image
+        run: |
+          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/multiservice-app-frontend:${{ steps.version.outputs.VERSION }} ./frontend
+
       - name: Push backend image
         run: |
           docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/multiservice-app-backend:${{ steps.version.outputs.VERSION }}
+
+      - name: Push frontend image
+        run: |
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/multiservice-app-frontend:${{ steps.version.outputs.VERSION }}
 
   deploy:
     needs: build-and-push
